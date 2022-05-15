@@ -3,7 +3,8 @@ import java.io.File
 /**
  * Reads lines from the given input txt file.
  */
-fun readInputLines(name: String) = File("src", "$name.txt").readLines()
+fun readInputLines(name: String) = readInputLines("src", name)
+fun readInputLines(path: String, name: String) = File("$path/src", "$name.txt").readLines()
 
 fun readInputFile(name: String) = File("src", "$name.txt").readText()
 fun readInputFile(path: String, name: String) = File("$path/src", "$name.txt").readText()
