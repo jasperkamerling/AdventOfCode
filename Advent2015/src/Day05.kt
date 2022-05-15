@@ -32,7 +32,7 @@ fun main() {
     check(!part2Test("ieodomkazucvgmuy"))
 
 
-    val input = readInputLines("Advent2015", "Day05")
+    val input = readInputLines("Day05")
     println(part1(input))
     println(part2(input))
 }

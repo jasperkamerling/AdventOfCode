@@ -54,7 +54,7 @@ fun main() {
     check(part2("^>v<") == 3)
     check(part2("^v^v^v^v^v") == 11)
 
-    val input = readInputFile("Advent2015", "Day03")
+    val input = readInputFile("Day03")
     println(part1(input))
     println(part2(input))
 }

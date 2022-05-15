@@ -22,7 +22,7 @@ fun main() {
     check(part1("abcdef") == 609043)
     check(part1("pqrstuv") == 1048970)
 
-    val input = readInputFile("Advent2015", "Day04")
+    val input = readInputFile("Day04")
     println(part1(input))
     println(part2(input))
 }

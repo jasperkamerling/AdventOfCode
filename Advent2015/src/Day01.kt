@@ -23,7 +23,7 @@ fun main() {
     check(part2(")") == 1)
     check(part2("()())") == 5)
 
-    val input = readInputFile("Advent2015", "Day01")
+    val input = readInputFile("Day01")
     println(part1(input))
     println(part2(input))
 }

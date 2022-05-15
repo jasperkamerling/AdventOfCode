@@ -77,7 +77,7 @@ fun main() {
     check(part2(listOf("turn on 0,0 through 0,0")) == 1)
     check(part2(listOf("toggle 0,0 through 999,999")) == 2000000)
 
-    val input = readInputLines("Advent2015", "Day06")
+    val input = readInputLines("Day06")
     println(part1(input))
     println(part2(input))
 }

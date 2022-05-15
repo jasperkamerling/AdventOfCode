@@ -19,7 +19,7 @@ fun main() {
     check(part2(listOf("2x3x4")) == 34)
     check(part2(listOf("1x1x10")) == 14)
 
-    val input = readInputLines("Advent2015", "Day02")
+    val input = readInputLines("Day02")
     println(part1(input))
     println(part2(input))
 }
