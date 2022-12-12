@@ -1,13 +1,14 @@
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.21"
 }
 
-subprojects {
-    apply(plugin = "kotlin")
-
+allprojects {
     repositories {
         mavenCentral()
     }
+}
+subprojects {
+    apply(plugin = "kotlin")
 
     tasks {
         sourceSets {
