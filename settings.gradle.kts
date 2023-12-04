@@ -5,5 +5,6 @@ include(
     "Advent2015",
     "Advent2020",
     "Advent2021",
-    "Advent2022"
+    "Advent2022",
+    "Advent2023",
 )
