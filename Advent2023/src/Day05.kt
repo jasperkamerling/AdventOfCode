@@ -1,16 +1,18 @@
-import kotlin.math.abs
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 fun main() {
     val testInput = readInputFile("Day05-test")
     val input = readInputFile("Day05")
 
-
     check(part1(testInput) == 35L)
     println(part1(input))
 
-
-    check(part2(testInput) == 0)
+    val startTime = Instant.now()
+    check(part2(testInput) == 46L)
     println(part2(input))
+
+    println("Time: " + startTime.until(Instant.now(), ChronoUnit.SECONDS))
 }
 
 private fun part1(input: String): Long {
@@ -20,19 +22,10 @@ private fun part1(input: String): Long {
         .split(" ")
         .map { it.toLong() }
 
-    val processors = chunks.drop(1)
+    val processors: List<List<RangeMapping>> = chunks.drop(1)
         .map { processInput(it) }
 
-    return seeds.map {
-        var location = it
-        for (map in processors) {
-            val mapper: RangeMapping? = map.find { it.source.contains(location) }
-            if(mapper != null) {
-                location += mapper.delta
-            }
-        }
-        return@map location
-    }.min()
+    return seeds.minOf { seedToLocation(it, processors) }
 }
 
 
@@ -51,6 +44,34 @@ fun processInput(input: String) =
             )
         }
 
-private fun part2(input: String): Int {
-    return input.length
+fun seedToLocation(seed: Long, processors: List<List<RangeMapping>>): Long {
+    var location = seed
+    for (map in processors) {
+        val mapper: RangeMapping? = map.find { it.source.contains(location) }
+        if (mapper != null) {
+            location += mapper.delta
+        }
+    }
+    return location
+}
+
+private fun part2(input: String): Long {
+    val chunks = input.split("\n\n")
+    val seeds: List<LongRange> = chunks[0]
+        .removePrefix("seeds: ")
+        .split(" ")
+        .map { it.toLong() }
+        .chunked(2)
+        .map { it[0]..<it[0] + it[1] }
+
+    println(seeds.sortedBy { it.last - it.first })
+
+    val processors = chunks.drop(1)
+        .map { processInput(it) }
+
+    return seeds.minOf {
+        println(it)
+        it.minOf { seedToLocation(it, processors) }
+    }
+
 }
