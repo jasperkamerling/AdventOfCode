@@ -5,7 +5,7 @@ import java.io.File
  */
 fun readInputLines(name: String, path: String = "./src/input") = File(path, "$name.txt").readLines()
 
-fun readInputFile( name: String, path: String = "src") = File(path, "$name.txt").readText()
+fun readInputFile( name: String, path: String = "./src/input") = File(path, "$name.txt").readText()
 
 /**
  * Reads integer lines from the given input txt file.
