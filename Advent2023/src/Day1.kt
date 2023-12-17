@@ -1,12 +1,13 @@
 val part1regex = Regex("\\d")
+
 fun part1(input: List<String>): Int {
-    return input.map {
+    return input.sumOf {
         val matches = part1regex.findAll(it)
-        return@map (matches.first().value.toInt() * 10) + matches.last().value.toInt()
-    }.sum()
+        return@sumOf (matches.first().value.toInt() * 10) + matches.last().value.toInt()
+    }
 }
 
-val part2regex = Regex("(\\d|one|two|three|four|five|six|seven|eight|nine)")
+val part2regex = Regex("(?=(\\d|one|two|three|four|five|six|seven|eight|nine))")
 
 fun stringToNumber(input: String) =
     when(input) {
@@ -22,16 +23,16 @@ fun stringToNumber(input: String) =
         else -> input.toInt()
     }
 fun part2(input: List<String>): Int {
-    return input.map {
+    return input.sumOf {
         val matches = part2regex.findAll(it)
-        val firstMatch = stringToNumber(matches.first().value)
-        val lastMatch = stringToNumber(matches.last().value)
-        return@map (firstMatch * 10) + lastMatch
-    }.sum()
+        val firstMatch = stringToNumber(matches.first().groupValues[1])
+        val lastMatch = stringToNumber(matches.last().groupValues[1])
+        return@sumOf (firstMatch * 10) + lastMatch
+    }
 }
 
 fun main() {
-    val testInput = readInputLines("Day01-test")
+    val testInput = readInputLines("Day01-test-1")
     val input = readInputLines("Day01")
 
     println(part1(testInput))
@@ -39,11 +40,13 @@ fun main() {
 
     println(part1(input))
 
-    val part2TestInput = readInputLines("Day01-2-test")
+    val part2TestInput = readInputLines("Day01-test-2")
 
     check(part2(part2TestInput) == 281)
-    check(part2(listOf("eightwone")) == 81)
+    check(part2(listOf("sevenine")) == 79)
     check(part2(listOf("4md")) == 44)
     check(part2(listOf("sixbrqklb347")) == 67)
+    check(part2(listOf("eightwone")) == 81)
+    check(part2(listOf("eighthree")) == 83)
     println(part2(input))
 }
