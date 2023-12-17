@@ -1,13 +1,13 @@
-val part1regex = Regex("\\d")
+private val part1regex = Regex("\\d")
 
-fun part1(input: List<String>): Int {
+private fun part1(input: List<String>): Int {
     return input.sumOf {
         val matches = part1regex.findAll(it)
         return@sumOf (matches.first().value.toInt() * 10) + matches.last().value.toInt()
     }
 }
 
-val part2regex = Regex("(?=(\\d|one|two|three|four|five|six|seven|eight|nine))")
+private val part2regex = Regex("(?=(\\d|one|two|three|four|five|six|seven|eight|nine))")
 
 fun stringToNumber(input: String) =
     when(input) {
@@ -22,7 +22,7 @@ fun stringToNumber(input: String) =
         "nine" -> 9
         else -> input.toInt()
     }
-fun part2(input: List<String>): Int {
+private fun part2(input: List<String>): Int {
     return input.sumOf {
         val matches = part2regex.findAll(it)
         val firstMatch = stringToNumber(matches.first().groupValues[1])

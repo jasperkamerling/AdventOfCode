@@ -1,8 +1,8 @@
-fun part1(input: List<String>): Int {
+private fun part1(input: List<String>): Int {
     return input.size
 }
 
-fun part2(input: List<String>): Int {
+private fun part2(input: List<String>): Int {
     return input.size
 }
 
