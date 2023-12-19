@@ -35,40 +35,49 @@ private fun part1(input: List<String>): Int {
     return sum
 }
 
-private fun part2(input: List<String>): Int {
-
-    val gears = mutableListOf<Pair<Int, Int>>()
-    input.forEachIndexed { lineIndex, line ->
-        line.forEachIndexed { rowIndex, char ->
-            if (char == '*') gears += Pair(lineIndex, rowIndex)
-        }
-    }
-    println(gears)
-
-    return gears.map { starCord ->
-        input.filterIndexed { index, _ ->
-            // Filter out only rows before, on or after a gear
-            index == starCord.first - 1
-                    || index == starCord.first ||
-                    index == starCord.first + 1
-        }.flatMap { row ->
-            // Find al numbers before at or after the gear column
-            digitRegex.findAll(row).filter {
-                it.range.contains(starCord.second - 1) ||
-                        it.range.contains(starCord.second) ||
-                        it.range.contains(starCord.second + 1)
-            }.map { it.value.toInt() }
-        }
-    }.filter {
-        // Only gears with more than one adjacent number count
-        it.size > 1
-    }.sumOf {
-        // multiply numbers around gear and sum them
-        it.reduce { accumulator, element ->
-            accumulator * element
-        }
-    }
-}
+/**
+ * Actions:
+ * - Map the input to a coordinate to char map
+ * - Filter to only get star icons
+ * - Map coordinates to numbers:
+ *  - Find lines on above, on or under the gear
+ *  - Find numbers on those lines
+ *    - Check if the number column overlaps with the column before on or after the gear
+ *    - Convert the number to ints
+ *  - Filter out gears with only one gear
+ *  - Multiply the numbers by each other
+ *  - Sum all the numbers
+ */
+private fun part2(input: List<String>): Int =
+    input.flatMapIndexed { lineIndex: Int, line: String ->
+        line.mapIndexed { rowIndex: Int, char: Char -> Pair(Pair(lineIndex, rowIndex), char) }
+    }.toMap()
+        .asSequence()
+        .filter { it.value == '*' }
+        .map { it.key }
+        .map { starCord ->
+            input.filterIndexed { index, _ ->
+                // Filter out only rows before, on or after a gear
+                index == starCord.first - 1
+                        || index == starCord.first ||
+                        index == starCord.first + 1
+            }.flatMap { row ->
+                // Find al numbers before at or after the gear column
+                digitRegex.findAll(row).filter {
+                    it.range.contains(starCord.second - 1) ||
+                            it.range.contains(starCord.second) ||
+                            it.range.contains(starCord.second + 1)
+                }.map { it.value.toInt() }
+            }
+        }.filter {
+            // Only gears with more than one adjacent number count
+            it.size > 1
+        }.map {
+            // multiply numbers around gear and sum them
+            it.reduce { accumulator, element ->
+                accumulator * element
+            }
+        }.sum()
 
 fun main() {
     val testInput = readInputLines("Day03-test")
