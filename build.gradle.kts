@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
 }
 
 allprojects {
@@ -10,6 +10,12 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
 
     tasks {
         sourceSets {

@@ -22,7 +22,7 @@ fun main() {
 
     fun two(start: String, name: String = start): Int {
         return if (bags.first { it.first == name }.second.isEmpty()) 1
-        else 1 + bags.first { it.first == name }.second.sumBy { it.first * two(start, it.second) }
+        else 1 + bags.first { it.first == name }.second.sumOf { it.first * two(start, it.second) }
     }
     println("two: ${two("shiny gold") - 1}")
 
