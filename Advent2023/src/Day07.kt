@@ -1,4 +1,4 @@
-import kotlin.test.asserter
+import kotlin.test.assertEquals
 
 object Day07 {
 
@@ -125,11 +125,11 @@ fun main() {
     val testInput = readInputLines("Day07-test")
     val input = readInputLines("Day07")
 
-    asserter.assertEquals("1: ", 101, Day07.part1(listOf("2AAAA 99", "33332 1")))
-    asserter.assertEquals("1: ", 6440, Day07.part1(testInput))
+    assertEquals(101, Day07.part1(listOf("2AAAA 99", "33332 1")), "Small example")
+    require(Day07.part1(testInput) == 6440) { "Test input" }
     println(Day07.part1(input))
 
 
-    asserter.assertEquals("2: ", 5905, Day07.part2(testInput))
+    assertEquals(5905, Day07.part2(testInput), "Test input")
     println(Day07.part2(input))
 }

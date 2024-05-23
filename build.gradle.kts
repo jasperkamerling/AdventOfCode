@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     kotlin("jvm") version "2.0.0"
+    kotlin("plugin.power-assert") version "2.0.0"
 }
 
 allprojects {
@@ -10,6 +13,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "org.jetbrains.kotlin.plugin.power-assert")
 
     java {
         toolchain {
@@ -24,6 +28,12 @@ subprojects {
                 resources.srcDirs("src")
             }
         }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    powerAssert {
+        functions = listOf("kotlin.require", "kotlin.test.assertEquals", "kotlin.check")
+        includedSourceSets = listOf("main")
     }
 }
 
