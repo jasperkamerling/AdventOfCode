@@ -1,5 +1,3 @@
-package com.scramados.`2020`
-
 import java.io.File
 
 fun main() {
