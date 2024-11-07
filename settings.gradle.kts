@@ -9,7 +9,14 @@ include(
     "Advent2015",
     "Advent2020",
     "Advent2021",
-    "Advent2022:day01",
     "Advent2023",
-    "Advent2024:day01",
 )
+
+mapOf(
+    2022 to listOf(1, 2),
+    2024 to listOf(1)
+).flatMap { mapEntry ->
+    mapEntry.value
+        .map { it.toString().padStart(2, '0') }
+        .map { day -> "Advent${mapEntry.key}:day${day}" }
+}.let { include(it) }
