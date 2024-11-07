@@ -17,16 +17,21 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(23)
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
-    tasks {
-        sourceSets {
-            main {
-                java.srcDirs("src")
-                resources.srcDirs("src")
-            }
+    if(project.name != "Utilities") {
+        dependencies {
+            implementation(project(":Utilities"))
+            implementation(kotlin("test"))
+        }
+    }
+
+    sourceSets {
+        main {
+            kotlin.srcDirs("src")
+            resources.srcDirs("resources")
         }
     }
 

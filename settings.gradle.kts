@@ -12,3 +12,7 @@ include(
     "Advent2022",
     "Advent2023",
 )
+
+(1..30).map { it.toString() }
+    .map { it.padStart(2, '0') }
+    .forEach { include("Advent2024:day${it}") }

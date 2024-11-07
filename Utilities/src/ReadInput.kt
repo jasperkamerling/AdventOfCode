@@ -13,3 +13,6 @@ fun readInputFile( name: String, path: String = "./src/input") = File(path, "$na
 fun readInputNumbers(name: String) = readInputLines(name).map { it.toInt() }
 
 fun readInputSplitNumber(name: String) = readInputFile(name).split(",").map { it.toInt() }
+
+
+fun fileFromResources(fileName: String): File = File({}.javaClass.getResource(fileName)!!.file)
