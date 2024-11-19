@@ -11,8 +11,8 @@ class Dayxx(fileName: String) {
 }
 
 fun main() {
-    val dayxxTest = Dayxx("test.txt")
-    val dayxx = Dayxx("real.txt")
+    val dayxxTest = Dayxx("testxx.txt")
+    val dayxx = Dayxx("realxx.txt")
 
 
     check(dayxxTest.part1() == 0)

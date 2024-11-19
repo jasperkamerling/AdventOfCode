@@ -31,7 +31,7 @@ subprojects {
     sourceSets {
         main {
             kotlin.srcDirs("src")
-            resources.srcDirs("resources")
+            resources.srcDirs("src", "src")
         }
     }
 
