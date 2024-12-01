@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.power-assert") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.power-assert") version "2.1.0"
 }
 
 allprojects {
