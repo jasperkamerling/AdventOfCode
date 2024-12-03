@@ -1,19 +1,24 @@
 import kotlin.math.absoluteValue
 
-data class Level(val previous: Int?, val increasing: Boolean = true, val decreasing: Boolean = true, val safe: Boolean = true)
+data class Level(
+    val previous: Int?,
+    val increasing: Boolean = true,
+    val decreasing: Boolean = true,
+    val safe: Boolean = true
+)
 
 class Day02(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
         .filterNot { it.isEmpty() }
-        .map { line -> line.split(" ").map {it.toInt()} }
+        .map { line -> line.split(" ").map { it.toInt() } }
 
     fun part1(): Int {
         return input.count { isRowSafe(it) }
     }
 
-    private fun isRowSafe(row: List<Int>): Boolean  {
+    private fun isRowSafe(row: List<Int>): Boolean {
         return row.fold(Level(null))
-            {acc, i -> checkLevel(acc, i) }
+        { acc, i -> checkLevel(acc, i) }
             .safe
     }
 
@@ -39,9 +44,9 @@ class Day02(fileName: String) {
     }
 
     fun checkAnySafeLevels(row: List<Int>): Boolean {
-        if(isRowSafe(row)) return true
-        return row.mapIndexed { index, number ->
-          row.toMutableList().apply{removeAt(index)}.toList()
+        if (isRowSafe(row)) return true
+        return row.mapIndexed { index, _ ->
+            row.toMutableList().apply { removeAt(index) }.toList()
         }.any { isRowSafe(it) }
     }
 
@@ -50,7 +55,6 @@ class Day02(fileName: String) {
 fun main() {
     val day02Test = Day02("test02.txt")
     val day02 = Day02("real02.txt")
-
 
     check(day02Test.part1() == 2)
     println(day02.part1())

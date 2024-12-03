@@ -4,11 +4,12 @@ class Day01(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
         .filterNot { it.isEmpty() }
         .map { it.split("   ") }
-        .map { Pair(it[0].toInt(), it[1].toInt()) }.fold(Pair<List<Int>, List<Int>>(listOf(), listOf()))
+        .map { Pair(it[0].toInt(), it[1].toInt()) }
+        .fold(Pair<List<Int>, List<Int>>(listOf(), listOf()))
         { acc, pair -> Pair(acc.first + pair.first, acc.second + pair.second) }
 
     fun part1(): Int =
-         input.let { Pair(it.first.sorted(), it.second.sorted()) }
+        input.let { Pair(it.first.sorted(), it.second.sorted()) }
             .let { lists ->
                 lists.first.mapIndexed { index, leftLocation -> leftLocation - lists.second[index] }
                     .sumOf { it.absoluteValue }
@@ -16,10 +17,11 @@ class Day01(fileName: String) {
 
 
     fun part2(): Int =
-         input.let { pair -> pair.first.map {
-                    leftNumber -> pair.second.count { it == leftNumber } * leftNumber
-                }
-            }.sum()
+        input.let { pair ->
+            pair.first.map { leftNumber ->
+                pair.second.count { it == leftNumber } * leftNumber
+            }
+        }.sum()
 }
 
 fun main() {
