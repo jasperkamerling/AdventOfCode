@@ -4,30 +4,29 @@ class Day03(fileName: String) {
     private val input = fileFromResources(fileName).readText()
 
     private val partOnePattern = Regex("mul\\((\\d+),(\\d+)\\)")
-    private val partTwoPattern = Regex("(mul\\((\\d+),(\\d+)\\))|(do\\(\\))|(don't\\(\\))")
+    private val partTwoPattern = Regex("mul\\((\\d+),(\\d+)\\)|do\\(\\)|don't\\(\\)")
 
     fun part1(): Int {
         return partOnePattern.findAll(input)
-            .map {it.groupValues }
-            .map {Pair(it[1].toInt(), it[2].toInt())}
-            .sumOf {it.first * it.second}
+            .map { it.groupValues }
+            .map { Pair(it[1].toInt(), it[2].toInt()) }
+            .sumOf { it.first * it.second }
     }
 
     data class Result(val sum: Int = 0, val enabled: Boolean = true)
 
     fun part2(): Int {
         return partTwoPattern.findAll(input)
-            .map {it.groupValues.drop(1).filterNot {it.isEmpty()} }
-            .fold(Result()) { r, i -> handleInstruction(r, i)}
+            .fold(Result()) { r, i -> handleInstruction(r, i) }
             .sum
     }
 
-    fun handleInstruction(result: Result, instruction: List<String>) : Result{
-        return if(result.enabled && instruction[0].startsWith("mul")) {
-            result.copy(sum = result.sum + instruction[1].toInt() * instruction[2].toInt())
-        } else if (instruction.contains("do()")) {
+    fun handleInstruction(result: Result, instruction: MatchResult): Result {
+        return if (result.enabled && instruction.value.startsWith("mul")) {
+            result.copy(sum = result.sum + instruction.groupValues[1].toInt() * instruction.groupValues[2].toInt())
+        } else if (instruction.value == "do()") {
             result.copy(enabled = true)
-        } else if (instruction.contains("don't()")) {
+        } else if (instruction.value == "don't()") {
             result.copy(enabled = false)
         } else {
             result
