@@ -1,90 +1,51 @@
-class Coordinates(val x: Int, val y: Int)
+class C(val x: Int, val y: Int)
+
+// valid coordinates
+class VCX(val name: String, val m: C, val a: C, val s: C)
 class Day04(fileName: String) {
+
     private val input: List<CharArray> = fileFromResources(fileName).readLines()
         .map { it.toCharArray() }
 
+    private val xmasCoordinates =
+        listOf(
+            VCX("R", C(0, 1), C(0, 2), C(0, 3)),
+            VCX("DR", C(1, 1), C(2, 2), C(3, 3)),
+            VCX("D", C(1, 0), C(2, 0), C(3, 0)),
+            VCX("DL", C(1, -1), C(2, -2), C(3, -3)),
+            VCX("L", C(0, -1), C(0, -2), C(0, -3)),
+            VCX("UL", C(-1, -1), C(-2, -2), C(-3, -3)),
+            VCX("U", C(-1, 0), C(-2, 0), C(-3, 0)),
+            VCX("UR", C(-1, 1), C(-2, 2), C(-3, 3)),
+        )
+
     fun part1(): Int {
         return input
-            .flatMapIndexed { x, chars -> chars.mapIndexed { y, _ -> Coordinates(x, y) } }
+            .flatMapIndexed { x, chars -> chars.mapIndexed { y, _ -> C(x, y) } }
             .sumOf { coordinates -> checkXmas(coordinates, input) }
     }
 
-    fun checkXmas(coordinates: Coordinates, matrix: List<CharArray>): Int {
-        var count = 0
+    fun checkXmas(c: C, matrix: List<CharArray>): Int {
         // Only check for coordinates that start XMAS
-        if (matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y) != 'X') {
+        if (matrix.getOrNull(c.x)?.getOrNull(c.y) != 'X') {
             return 0
         }
 
-        // DOWN RIGHT
-        if (matrix.getOrNull(coordinates.x + 1)?.getOrNull(coordinates.y + 1) == 'M' &&
-            matrix.getOrNull(coordinates.x + 2)?.getOrNull(coordinates.y + 2) == 'A' &&
-            matrix.getOrNull(coordinates.x + 3)?.getOrNull(coordinates.y + 3) == 'S'
-        ) {
-            count++
+        return xmasCoordinates.count {
+            matrix.getOrNull(c.x + it.m.x)?.getOrNull(c.y + it.m.y) == 'M' &&
+                    matrix.getOrNull(c.x + it.a.x)?.getOrNull(c.y + it.a.y) == 'A' &&
+                    matrix.getOrNull(c.x + it.s.x)?.getOrNull(c.y + it.s.y) == 'S'
         }
-        // RIGHT
-        if (matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y + 1) == 'M' &&
-            matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y + 2) == 'A' &&
-            matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y + 3) == 'S'
-        ) {
-            count++
-        }
-        // UP RIGHT
-        if (matrix.getOrNull(coordinates.x - 1)?.getOrNull(coordinates.y + 1) == 'M' &&
-            matrix.getOrNull(coordinates.x - 2)?.getOrNull(coordinates.y + 2) == 'A' &&
-            matrix.getOrNull(coordinates.x - 3)?.getOrNull(coordinates.y + 3) == 'S'
-        ) {
-            count++
-        }
-
-        // DOWN LEFT
-        if (matrix.getOrNull(coordinates.x + 1)?.getOrNull(coordinates.y - 1) == 'M' &&
-            matrix.getOrNull(coordinates.x + 2)?.getOrNull(coordinates.y - 2) == 'A' &&
-            matrix.getOrNull(coordinates.x + 3)?.getOrNull(coordinates.y - 3) == 'S'
-        ) {
-            count++
-        }
-        // LEFT
-        if (matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y - 1) == 'M' &&
-            matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y - 2) == 'A' &&
-            matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y - 3) == 'S'
-        ) {
-            count++
-        }
-        // UP LEFT
-        if (matrix.getOrNull(coordinates.x - 1)?.getOrNull(coordinates.y - 1) == 'M' &&
-            matrix.getOrNull(coordinates.x - 2)?.getOrNull(coordinates.y - 2) == 'A' &&
-            matrix.getOrNull(coordinates.x - 3)?.getOrNull(coordinates.y - 3) == 'S'
-        ) {
-            count++
-        }
-
-        // DOWN
-        if (matrix.getOrNull(coordinates.x + 1)?.getOrNull(coordinates.y) == 'M' &&
-            matrix.getOrNull(coordinates.x + 2)?.getOrNull(coordinates.y) == 'A' &&
-            matrix.getOrNull(coordinates.x + 3)?.getOrNull(coordinates.y) == 'S'
-        ) {
-            count++
-        }
-        // UP
-        if (matrix.getOrNull(coordinates.x - 1)?.getOrNull(coordinates.y) == 'M' &&
-            matrix.getOrNull(coordinates.x - 2)?.getOrNull(coordinates.y) == 'A' &&
-            matrix.getOrNull(coordinates.x - 3)?.getOrNull(coordinates.y) == 'S'
-        ) {
-            count++
-        }
-        return count
     }
 
 
     fun part2(): Int {
         return input
-            .flatMapIndexed { x, chars -> chars.mapIndexed { y, _ -> Coordinates(x, y) } }
+            .flatMapIndexed { x, chars -> chars.mapIndexed { y, _ -> C(x, y) } }
             .sumOf { coordinates -> checkMas(coordinates, input) }
     }
 
-    fun checkMas(coordinates: Coordinates, matrix: List<CharArray>): Int {
+    fun checkMas(coordinates: C, matrix: List<CharArray>): Int {
         var count = 0
         // Only check for coordinates that start A
         if (matrix.getOrNull(coordinates.x)?.getOrNull(coordinates.y) != 'A') {
@@ -97,7 +58,7 @@ class Day04(fileName: String) {
             matrix.getOrNull(coordinates.x + 1)?.getOrNull(coordinates.y - 1) == null ||
             matrix.getOrNull(coordinates.x + 1)?.getOrNull(coordinates.y + 1) == null
         ) {
-            return 0;
+            return 0
         }
         val upLeft = matrix[coordinates.x - 1][coordinates.y - 1]
         val upRight = matrix[coordinates.x - 1][coordinates.y + 1]
