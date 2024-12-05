@@ -1,3 +1,5 @@
+import java.util.*
+
 class Day05(fileName: String) {
     private val input = fileFromResources(fileName).readText()
         .split("\n\n").let { it[0] to it[1] }
@@ -31,21 +33,23 @@ class Day05(fileName: String) {
     fun part2(): Int {
         return updates
             .filterNot { isInOrder(it) }
-            .parallelStream()
-            .map { sort(it) }
-            .toList()
+            .map { bubbleSort(it) }
             .sumOf { it[it.size / 2] }
     }
 
-    private fun sort(update: List<Int>): List<Int> {
-        var shuffledList = update
-        var notSorted = true
-        while(notSorted) {
-            shuffledList = update.shuffled()
-            notSorted = !isInOrder(shuffledList)
+    private fun bubbleSort(update: List<Int>): List<Int> {
+        val resultList = update.toMutableList()
+        val size = resultList.size
+        (0..<(size - 1)).forEach { i ->
+            (0..<size - i - 1).forEach { j ->
+                if (shouldNotFollowMap[resultList[j]]?.contains(resultList[j + 1]) == true) {
+                    val temp = resultList[j]
+                    resultList[j] = resultList[j + 1]
+                    resultList[j + 1] = temp
+                }
+            }
         }
-
-        return shuffledList
+        return resultList.toList()
     }
 }
 
@@ -58,5 +62,6 @@ fun main() {
     println(day05.part1())
 
     check(day05Test.part2() == 123)
+    println("test done")
     println(day05.part2())
 }
