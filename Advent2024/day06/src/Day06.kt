@@ -112,14 +112,14 @@ class Day06(fileName: String) {
     }
 
     fun part2(): Int {
-        val maps: List<Map> = getMap().flatMapIndexed { xIndex, x ->
-            x.filterNot { it.type == CRATE }
-                .mapIndexed { yIndex, _ ->
-                    getMap().also { it[xIndex][yIndex].apply { type = OBSTACLE } }
-                }
-        }
+        return getMap().asSequence()
+            .flatMapIndexed { xIndex, x ->
+                x.filterNot { it.type == CRATE }
+                    .mapIndexed { yIndex, _ ->
+                        getMap().also { it[xIndex][yIndex].apply { type = OBSTACLE } }
+                    }
 
-        return maps.count { isInfinite(getGuard(it)) }
+            }.count { isInfinite(getGuard(it)) }
     }
 
     private fun isInfinite(guard: Guard): Boolean {
