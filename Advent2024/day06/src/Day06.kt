@@ -1,5 +1,7 @@
 import Direction.*
 import LocationType.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 typealias Map = List<List<Location>>
 
@@ -112,15 +114,15 @@ class Day06(fileName: String) {
         return guard
     }
 
-    fun part2(): Int {
-        return getMap().asSequence()
+    fun part2(): Int = runBlocking {
+        getMap()
+            .asSequence()
             .flatMapIndexed { xIndex, x ->
-                x.filterNot { it.type == CRATE }
-                    .mapIndexed { yIndex, _ ->
-                        getMap().also { it[xIndex][yIndex].apply { type = OBSTACLE } }
-                    }
-
-            }.count { isInfinite(getGuard(it)) }
+                List(x.filterNot { it.type == CRATE }.size) { yIndex ->
+                    async { getMap().also { it[xIndex][yIndex].apply { type = OBSTACLE } } }
+                }
+            }.map { async { isInfinite(getGuard(it.await())) } }
+            .count { it.await() }
     }
 
     private fun isInfinite(guard: Guard): Boolean {
