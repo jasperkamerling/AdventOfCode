@@ -4,10 +4,10 @@ import LocationType.*
 typealias Map = List<List<Location>>
 
 enum class LocationType {
-    EMPTY, CRATE, OBSTACLE;
+    EMPTY, CRATE, OBSTACLE, GUARD;
 }
 
-class Location(var type: LocationType, var isVisited: Boolean = false) {
+data class Location(var type: LocationType, var isVisited: Boolean = false) {
     fun isObstacle(): Boolean {
         return type == CRATE || type == OBSTACLE
     }
@@ -18,6 +18,7 @@ class Location(var type: LocationType, var isVisited: Boolean = false) {
             type == EMPTY -> '.'
             type == CRATE -> '#'
             type == OBSTACLE -> 'O'
+            type == GUARD -> '^'
             else -> ' '
         }
     }
@@ -70,26 +71,26 @@ data class Guard(var x: Int, var y: Int, var direction: Direction, val map: Map,
 
 class Day06(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
-        .map { it.toCharArray() }
 
+    private val baseMap = input
+        .map { it.toCharArray().map { ch -> Location(determineLocationType(ch)) } }
 
-    private fun getMap(): Map = input.map {
-        it.map { char -> Location(determineLocationType(char)) }
-    }
+    private val startingPosition = baseMap.flatMapIndexed { x, row ->
+        row.mapIndexed { y, ch -> if (ch.type == GUARD) Pair(x, y) else null }
+    }.filterNotNull().first()
+
+    private fun getMap(): Map = baseMap.map { it.map { it.copy() } }
 
     private fun determineLocationType(char: Char): LocationType {
-        return if (char == '#') CRATE else EMPTY
+        return when (char) {
+            '#' -> CRATE
+            '^' -> GUARD
+            else -> EMPTY
+        }
     }
 
     private fun getGuard(map: Map): Guard {
-        input.forEachIndexed { index, chars ->
-            chars.forEachIndexed { charIndex, char ->
-                if (char == '^') {
-                    return@getGuard Guard(index, charIndex, UP, map)
-                }
-            }
-        }
-        throw Exception("Did not find starting location")
+        return Guard(startingPosition.first, startingPosition.second, UP, map)
     }
 
     fun part1(): Int {
