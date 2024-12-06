@@ -3,7 +3,21 @@ import Direction.*
 class Location(val isCrate: Boolean, var isVisited: Boolean = false)
 enum class Direction { UP, DOWN, LEFT, RIGHT }
 
-data class Guard(var x: Int, var y: Int, var direction: Direction) {
+data class Guard(var x: Int, var y: Int, var direction: Direction, val map: List<List<Location>>) {
+
+    fun visitLocation() {
+        map[x][y].isVisited = true
+    }
+
+
+    fun isFacingCrate(): Boolean {
+        return when (direction) {
+            UP -> map.getOrNull(x - 1)?.getOrNull(y)
+            RIGHT -> map.getOrNull(x)?.getOrNull(y + 1)
+            DOWN -> map.getOrNull(x + 1)?.getOrNull(y)
+            LEFT -> map.getOrNull(x)?.getOrNull(y - 1)
+        }?.isCrate == true
+    }
 
     fun changeDirection() {
         direction = when (direction) {
@@ -22,20 +36,24 @@ data class Guard(var x: Int, var y: Int, var direction: Direction) {
             LEFT -> y -= 1
         }
     }
+
+    fun inBounds(): Boolean {
+        return map.getOrNull(x)?.getOrNull(y) != null
+    }
 }
 
 class Day06(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
         .map { it.toCharArray() }
 
-    private val map: List<List<Location>> = input.map { it.map { char -> Location(char == '#') } }
-    private val startingLocation = determineStartingPosition()
 
-    private fun determineStartingPosition(): Guard {
+    private fun getMap(): List<List<Location>> = input.map { it.map { char -> Location(char == '#') } }
+
+    private fun getGuard(): Guard {
         input.forEachIndexed { index, chars ->
             chars.forEachIndexed { charIndex, char ->
                 if (char == '^') {
-                    return@determineStartingPosition Guard(index, charIndex, UP)
+                    return@getGuard Guard(index, charIndex, UP, getMap())
                 }
             }
         }
@@ -43,37 +61,23 @@ class Day06(fileName: String) {
     }
 
     fun part1(): Int {
-        val guard = startingLocation
-        do {
-            getCurrentLocation(guard).isVisited = true
-            val facingLocation = getFacingLocation(guard) ?: break
+        return getGuard()
+            .also { walkMap(it) }
+            .map.sumOf { row -> row.count { it.isVisited } }
+    }
 
-            if (facingLocation.isCrate) {
+    private fun walkMap(guard: Guard): Guard {
+        do {
+            guard.visitLocation()
+            if (guard.isFacingCrate()) {
                 guard.changeDirection()
             }
 
             guard.move()
-        } while (true)
+        } while (guard.inBounds())
 
-        return map.sumOf { row -> row.count { it.isVisited } }
+        return guard
     }
-
-    private fun getCurrentLocation(guard: Guard): Location {
-        return map[guard.x][guard.y]
-    }
-
-    private fun getFacingLocation(guard: Guard): Location? {
-        return when (guard.direction) {
-            UP -> map.getOrNull(guard.x - 1)?.getOrNull(guard.y)
-            RIGHT -> map.getOrNull(guard.x)?.getOrNull(guard.y + 1)
-            DOWN -> map.getOrNull(guard.x + 1)?.getOrNull(guard.y)
-            LEFT -> map.getOrNull(guard.x)?.getOrNull(guard.y - 1)
-        }
-    }
-
-//    fun inBounds(position: Position): Boolean {
-//        return position.x > input.size || position.y > input.first().size
-//    }
 
     fun part2(): Int {
         return input.hashCode()
@@ -89,6 +93,7 @@ fun main() {
     println("Test part 1 complete")
     println(day06.part1())
 
-    check(day06Test.part2() == 1)
+    check(day06Test.part2() == 6)
+    println("Test part 2 complete")
     println(day06.part2())
 }
