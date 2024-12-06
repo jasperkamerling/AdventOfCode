@@ -1,5 +1,6 @@
 import Direction.*
 import LocationType.*
+import kotlin.collections.isNotEmpty
 
 typealias Map = List<List<Location>>
 
@@ -7,14 +8,16 @@ enum class LocationType {
     EMPTY, CRATE, OBSTACLE;
 }
 
-class Location(var type: LocationType, var isVisited: Boolean = false) {
+class Location(var type: LocationType, var visited: MutableSet<Direction> = mutableSetOf()) {
     fun isObstacle(): Boolean {
         return type == CRATE || type == OBSTACLE
     }
 
+    fun hasBeenVisited() = visited.isNotEmpty()
+
     fun display(): Char {
         return when {
-            isVisited -> 'X'
+            visited.isNotEmpty() -> 'X'
             type == EMPTY -> '.'
             type == CRATE -> '#'
             type == OBSTACLE -> 'O'
@@ -26,9 +29,13 @@ class Location(var type: LocationType, var isVisited: Boolean = false) {
 enum class Direction { UP, DOWN, LEFT, RIGHT }
 
 data class Guard(var x: Int, var y: Int, var direction: Direction, val map: Map, var steps: Int = 0) {
+
     fun visitLocation() {
-        map[x][y].isVisited = true
+        map[x][y].visited.add(direction)
     }
+
+    fun isDuplicateVisit() =
+        map[x][y].visited.contains(direction)
 
     fun isFacingObstacle(): Boolean {
         return getFacingLocation()?.isObstacle() == true
@@ -95,7 +102,7 @@ class Day06(fileName: String) {
     fun part1(): Int {
         return getGuard(getMap())
             .also { walkMap(it) }
-            .map.sumOf { row -> row.count { it.isVisited } }
+            .map.sumOf { row -> row.count { it.hasBeenVisited() } }
     }
 
     private fun walkMap(guard: Guard): Guard {
@@ -124,9 +131,10 @@ class Day06(fileName: String) {
 
     private fun isInfinite(guard: Guard): Boolean {
         do {
-            if (guard.steps > 10000) {
+            if (guard.isDuplicateVisit()) {
                 return true
             }
+            guard.visitLocation()
             if (guard.isFacingObstacle()) {
                 guard.changeDirection()
             }
