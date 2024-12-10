@@ -1,48 +1,45 @@
 import Direction.*
-import LocationType.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
 typealias Map = List<List<Location>>
 
-enum class LocationType {
-    EMPTY, CRATE, OBSTACLE, GUARD;
-}
-
-data class Location(var type: LocationType, var isVisited: Boolean = false) {
-    fun isObstacle(): Boolean {
-        return type == CRATE || type == OBSTACLE
-    }
-
-    fun display(): Char {
-        return when {
-            isVisited -> 'X'
-            type == EMPTY -> '.'
-            type == CRATE -> '#'
-            type == OBSTACLE -> 'O'
-            type == GUARD -> '^'
-            else -> ' '
-        }
-    }
-}
+data class Location(var isCrate: Boolean, var isVisited: Boolean = false)
 
 enum class Direction { UP, DOWN, LEFT, RIGHT }
 
-data class Guard(var x: Int, var y: Int, var direction: Direction, val map: Map, var steps: Int = 0) {
+data class Guard(
+    var x: Int,
+    var y: Int,
+    var direction: Direction,
+    val map: Map,
+    val blockedCoordinates: Pair<Int, Int>? = null,
+    var steps: Int = 0
+) {
     fun visitLocation() {
         map[x][y].isVisited = true
     }
 
-    fun isFacingObstacle(): Boolean {
-        return getFacingLocation()?.isObstacle() == true
+    fun isPathBlocked(): Boolean {
+        return getFacingLocation() || getFacingObstacle()
     }
 
-    private fun getFacingLocation(): Location? {
+    private fun getFacingLocation(): Boolean {
         return when (direction) {
             UP -> map.getOrNull(x - 1)?.getOrNull(y)
             RIGHT -> map.getOrNull(x)?.getOrNull(y + 1)
             DOWN -> map.getOrNull(x + 1)?.getOrNull(y)
             LEFT -> map.getOrNull(x)?.getOrNull(y - 1)
+        }?.isCrate == true
+    }
+
+    private fun getFacingObstacle(): Boolean {
+        if (blockedCoordinates == null) return false
+        return when (direction) {
+            UP -> blockedCoordinates.first == x - 1 && blockedCoordinates.second == y
+            RIGHT -> blockedCoordinates.first == x && blockedCoordinates.second == y + 1
+            DOWN -> blockedCoordinates.first == x + 1 && blockedCoordinates.second == y
+            LEFT -> blockedCoordinates.first == x && blockedCoordinates.second == y - 1
         }
     }
 
@@ -74,29 +71,19 @@ data class Guard(var x: Int, var y: Int, var direction: Direction, val map: Map,
 class Day06(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
 
-    private val baseMap = input
-        .map { it.toCharArray().map { ch -> Location(determineLocationType(ch)) } }
+    private val map = input
+        .map { it.toCharArray().map { ch -> Location(ch == '#') } }
 
-    private val startingPosition = baseMap.flatMapIndexed { x, row ->
-        row.mapIndexed { y, ch -> if (ch.type == GUARD) Pair(x, y) else null }
-    }.filterNotNull().first()
+    private val startingPosition = input
+        .flatMapIndexed { x, row ->
+            row.mapIndexed { y, ch -> if (ch == '^') Pair(x, y) else null }
+        }.filterNotNull().first()
 
-    private fun getMap(): Map = baseMap.map { it.map { it.copy() } }
-
-    private fun determineLocationType(char: Char): LocationType {
-        return when (char) {
-            '#' -> CRATE
-            '^' -> GUARD
-            else -> EMPTY
-        }
-    }
-
-    private fun getGuard(map: Map): Guard {
-        return Guard(startingPosition.first, startingPosition.second, UP, map)
-    }
+    private fun getGuard(map: Map, cords: Pair<Int, Int>? = null): Guard =
+        Guard(startingPosition.first, startingPosition.second, UP, map, cords)
 
     fun part1(): Int {
-        return getGuard(getMap())
+        return getGuard(map)
             .also { walkMap(it) }
             .map.sumOf { row -> row.count { it.isVisited } }
     }
@@ -104,7 +91,8 @@ class Day06(fileName: String) {
     private fun walkMap(guard: Guard): Guard {
         do {
             guard.visitLocation()
-            if (guard.isFacingObstacle()) {
+
+            if (guard.isPathBlocked()) {
                 guard.changeDirection()
             }
 
@@ -115,13 +103,13 @@ class Day06(fileName: String) {
     }
 
     fun part2(): Int = runBlocking {
-        getMap()
+        map
             .asSequence()
-            .flatMapIndexed { xIndex, x ->
-                List(x.filterNot { it.type == CRATE }.size) { yIndex ->
-                    async { getMap().also { it[xIndex][yIndex].apply { type = OBSTACLE } } }
+            .flatMapIndexed { x, row ->
+                List(row.filterNot { it.isCrate }.size) { y ->
+                    getGuard(map, x to y)
                 }
-            }.map { async { isInfinite(getGuard(it.await())) } }
+            }.map { async { isInfinite(it) } }
             .count { it.await() }
     }
 
@@ -130,20 +118,13 @@ class Day06(fileName: String) {
             if (guard.steps > 10000) {
                 return true
             }
-            if (guard.isFacingObstacle()) {
+            if (guard.isPathBlocked()) {
                 guard.changeDirection()
             }
             guard.move()
         } while (guard.inBounds())
 
         return false
-    }
-
-    private fun Map.print() {
-        println()
-        this.forEach {
-            println(it.map { it.display() }.joinToString(""))
-        }
     }
 }
 
