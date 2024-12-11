@@ -8,7 +8,20 @@ class Day07(fileName: String) {
 
     fun part1(): Long {
         return input.filter {
-            isValid(
+            isValid1(it.total, it.numbers.first().toLong(), it.numbers.drop(1))
+        }.sumOf { it.total }
+    }
+
+    fun isValid1(total: Long, sum: Long, numbers: List<Int>): Boolean {
+        if (sum > total) return false
+        if (numbers.isEmpty()) return sum == total
+        return isValid1(total, sum + numbers.first(), numbers.drop(1)) || // plus
+                isValid1(total, sum * numbers.first(), numbers.drop(1)) // multiply
+    }
+
+    fun part2(): Long {
+        return input.filter {
+            isValid2(
                 it.total,
                 it.numbers.first().toLong(),
                 it.numbers.drop(1)
@@ -16,15 +29,12 @@ class Day07(fileName: String) {
         }.sumOf { it.total }
     }
 
-    fun isValid(total: Long, sum: Long, numbers: List<Int>): Boolean {
+    fun isValid2(total: Long, sum: Long, numbers: List<Int>): Boolean {
         if (sum > total) return false
         if (numbers.isEmpty()) return sum == total
-        return isValid(total, sum + numbers.first(), numbers.drop(1)) || // plus
-                isValid(total, sum * numbers.first(), numbers.drop(1)) // multiply
-    }
-
-    fun part2(): Int {
-        return input.hashCode()
+        return isValid2(total, sum + numbers.first(), numbers.drop(1)) || // plus
+                isValid2(total, sum * numbers.first(), numbers.drop(1)) || // plus
+                isValid2(total, "${sum}${numbers.first()}".toLong(), numbers.drop(1)) // concat
     }
 }
 
@@ -35,6 +45,6 @@ fun main() {
     check(day07Test.part1() == 3749L)
     println(day07.part1())
 
-    check(day07Test.part2() == 1)
+    check(day07Test.part2() == 11387L)
     println(day07.part2())
 }
