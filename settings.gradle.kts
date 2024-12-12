@@ -14,7 +14,7 @@ include(
 
 mapOf(
     2015 to listOf(9),
-    2022 to listOf(1, 2),
+    2022 to listOf(1),
     2024 to listOf(1, 2, 3, 4, 5, 6, 7, 8)
 ).flatMap { mapEntry ->
     mapEntry.value
