@@ -46,7 +46,9 @@ class Day09(fileName: String) {
                 mutableFs[pointer] = mutableFs.last()
                 mutableFs.removeLast()
             }
-            mutableFs = mutableFs.dropLastWhile { it == null }.toMutableList()
+            while (mutableFs.last() == null) {
+                mutableFs.removeLast()
+            }
             pointer++
         }
         return mutableFs.map { it!! }
