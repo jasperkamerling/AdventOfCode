@@ -1,13 +1,12 @@
 import kotlin.time.measureTimedValue
 
 fun getFileSystem(data: List<Int>): List<Int?> {
-    data class State(val write: Boolean, val id: Int = 0, val fs: List<Int?> = listOf()) {
-        fun write(size: Int): State =
-            State(
-                write = !write,
-                id = if (write) id + 1 else id,
-                fs = fs + appendFiles(size)
-            )
+    data class State(var write: Boolean = true, var id: Int = 0, val fs: MutableList<Int?> = mutableListOf()) {
+        fun write(size: Int) {
+            fs.addAll(appendFiles(size))
+            if(write) id++
+            write = !write
+        }
 
         private fun appendFiles(size: Int): List<Int?> =
             if (write) {
@@ -17,9 +16,11 @@ fun getFileSystem(data: List<Int>): List<Int?> {
             }
     }
 
-    return data.fold(State(true)) { state, size ->
+    val state = State()
+    data.forEach { size ->
         state.write(size)
-    }.fs
+    }
+    return state.fs
 }
 
 class Day09(fileName: String) {
