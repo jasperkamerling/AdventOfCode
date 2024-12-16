@@ -4,7 +4,7 @@ fun getFileSystem(data: List<Int>): List<Int?> {
     data class State(var write: Boolean = true, var id: Int = 0, val fs: MutableList<Int?> = mutableListOf()) {
         fun write(size: Int) {
             fs.addAll(appendFiles(size))
-            if(write) id++
+            if (write) id++
             write = !write
         }
 
@@ -29,29 +29,52 @@ class Day09(fileName: String) {
             .toCharArray()
             .map { it.digitToInt() }
 
+    private val fs = getFileSystem(input)
+
     fun part1(): Long {
-        return getFileSystem(input).defrag().checksum()
+        return fs.defrag().checksum()
     }
 
-    fun part2(): Int {
-        return input.hashCode()
+    fun part2(): Long {
+        return fs.fastDefrag().checksum()
     }
 
-    private fun List<Int?>.defrag(): List<Int> {
-        var mutableFs = this.toMutableList()
+    private fun List<Int?>.defrag(): List<Int?> {
+        val mfs = this.toMutableList()
         var pointer = 0
-        while (mutableFs.hasEmptyBlocks()) {
-            val currentId = mutableFs[pointer]
+        while (mfs.hasEmptyBlocks()) {
+            val currentId = mfs[pointer]
             if (currentId == null) {
-                mutableFs[pointer] = mutableFs.last()
-                mutableFs.removeLast()
+                mfs[pointer] = mfs.last()
+                mfs.removeLast()
             }
-            while (mutableFs.last() == null) {
-                mutableFs.removeLast()
+            while (mfs.last() == null) {
+                mfs.removeLast()
             }
             pointer++
         }
-        return mutableFs.map { it!! }
+        return mfs
+    }
+
+    private fun List<Int?>.fastDefrag(): List<Int?> {
+        val mfs = this.toMutableList()
+        var pointer = 0
+        while (true) {
+            val firstNullBlockSize = mfs.firstNullBlockSize()
+
+            val lastGroupIndex = mfs.lastBlockSize(firstNullBlockSize)
+            val currentId = mfs[pointer]
+            if (currentId == null) {
+                mfs[pointer] = mfs.last()
+                mfs.removeLast()
+            }
+            while (mfs.last() == null) {
+                mfs.removeLast()
+            }
+            pointer++
+
+            return mfs.toList()
+        }
     }
 
     private fun List<Int?>.hasEmptyBlocks(): Boolean =
@@ -61,7 +84,26 @@ class Day09(fileName: String) {
         this.foldIndexed(0L) { index, acc, id ->
             acc + (index * (id ?: 0))
         }
+
 }
+
+/** Returns index of start of group */
+fun List<Int?>.lastBlockSize(groupSize: Int): Int? {
+
+    this.windowed(groupSize) {
+
+    }
+
+    this.indices.map { index ->
+        val cutOff = this.dropLast(index)
+        if (cutOff.takeLast(groupSize).all { it == cutOff.last() })
+            return this.size - index
+    }
+    return null
+}
+
+fun List<Int?>.firstNullBlockSize(): Int =
+    this.dropWhile { it != null }.takeWhile { it == null }.size
 
 fun main() {
     val testInput = Day09("test09.txt")
@@ -70,6 +112,16 @@ fun main() {
     check(testInput.part1() == 1928L)
     measureTimedValue { input.part1() }.let { println("${it.value} - ${it.duration}") }
 
-    check(testInput.part2() == 1)
+    // Check last block size
+    check(listOf(1, 2, null, 3, 3).lastBlockSize(2) == 3)
+    check(listOf(1, 2, 4, 4, 4).lastBlockSize(3) == 2)
+    check(listOf(1, 2, 4, 4, 4).lastBlockSize(5) == null)
+
+    // Check first null block size
+    check(listOf(1, 2, 4, 4, 4).firstNullBlockSize() == 0)
+    check(listOf(null, null, 4, 4, 4).firstNullBlockSize() == 2)
+    check(listOf(1, null, null, null, 4).firstNullBlockSize() == 3)
+
+    check(testInput.part2() == 2858L)
     measureTimedValue { input.part2() }.let { println("${it.value} - ${it.duration}") }
 }
