@@ -1,4 +1,4 @@
-data class Location(val char: Char, val cords: Cords)
+data class Location<C>(val char: C, val cords: Cords)
 
 data class Cords(val x: Int, val y: Int) {
     operator fun plus(other: Cords) =
@@ -15,13 +15,21 @@ data class Cords(val x: Int, val y: Int) {
     }
 }
 
+fun <C> List<Location<C>>.findNeighbors(loc: Location<*>): List<Location<C>> =
+    this.filter {
+        it.cords.x == loc.cords.x - 1 && it.cords.y == loc.cords.y  ||
+                it.cords.x == loc.cords.x + 1 && it.cords.y == loc.cords.y  ||
+                it.cords.x == loc.cords.x && it.cords.y == loc.cords.y - 1 ||
+                it.cords.x == loc.cords.x && it.cords.y == loc.cords.y + 1
+    }
+
 fun List<Cords>.printMap(hit: Char = '#', empty: Char = '.') {
     val maxX = this.maxOf { it.x }
     val maxY = this.maxOf { it.y }
     println()
     (0..maxX).forEach { x ->
         (0..maxY).forEach { y ->
-            if(this.any { it.x == x && it.y == y }) {
+            if (this.any { it.x == x && it.y == y }) {
                 print(hit)
             } else {
                 print(empty)
@@ -31,7 +39,7 @@ fun List<Cords>.printMap(hit: Char = '#', empty: Char = '.') {
     }
 }
 
-fun List<Location>.printMap(empty: Char = '.') {
+fun List<Location<*>>.printMap(empty: Char = '.') {
     val maxX = this.maxOf { it.cords.x }
     val maxY = this.maxOf { it.cords.y }
     println()

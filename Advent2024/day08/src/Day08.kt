@@ -1,7 +1,5 @@
 import kotlin.time.measureTimedValue
 
-data class Location(val char: Char, val cords: Cords)
-
 class Day08(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
     private val locations =

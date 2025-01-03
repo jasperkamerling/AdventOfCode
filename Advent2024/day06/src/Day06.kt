@@ -1,6 +1,7 @@
 import Direction.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import java.io.Serializable
+import kotlin.time.measureTime
 
 typealias Map = List<List<Location>>
 
@@ -109,8 +110,7 @@ class Day06(fileName: String) {
                 List(row.filterNot { it.isCrate }.size) { y ->
                     getGuard(map, x to y)
                 }
-            }.map { async { isInfinite(it) } }
-            .count { it.await() }
+            }.count { isInfinite(it) }
     }
 
     private fun isInfinite(guard: Guard): Boolean {
@@ -125,6 +125,7 @@ class Day06(fileName: String) {
         } while (guard.inBounds())
 
         return false
+
     }
 }
 
@@ -133,10 +134,13 @@ fun main() {
     val day06 = Day06("real06.txt")
 
     check(day06Test.part1() == 41)
-    println("Test part 1 complete")
-    println(day06.part1())
+    runTimed(1) { day06.part1() }
 
     check(day06Test.part2() == 6)
-    println("Test part 2 complete")
-    println(day06.part2())
+    runTimed(2) { day06.part2() }
+}
+
+fun runTimed(part: Int, runnable: () -> Serializable) {
+    val runtime = measureTime { println("result: " + runnable()) }
+    println("Ran part ${part} in: ${runtime}")
 }
