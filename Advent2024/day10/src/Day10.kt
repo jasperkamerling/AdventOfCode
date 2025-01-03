@@ -10,30 +10,30 @@ class Day10(fileName: String) {
     fun part1(): Int {
         cords.printMap()
         return cords.filter { it.char == 0 }
-            .sumOf { find9(it).distinct().size }
+            .sumOf { find9(it).size }
     }
 
-    fun find9(loc: Location<Int>): List<Cords> {
-        if (loc.char == 9) return listOf(loc.cords)
+    fun find9(loc: Location<Int>): Set<Cords> {
+        if (loc.char == 9) return setOf(loc.cords)
         return cords.findNeighbors(loc)
             .filter { it.char == loc.char + 1 }
             .flatMap { find9(it) }
+            .toSet()
     }
 
-    val completedRoutes: MutableSet<List<Cords>> = mutableSetOf()
 
     fun part2(): Int {
         cords.printMap()
-        cords.filter { it.char == 0 }
-            .forEach { distinctTrails(it, listOf(it.cords)) }
-        return completedRoutes.size
+        return cords.filter { it.char == 0 }
+            .sumOf { distinctTrails(it, listOf(it.cords)).size }
     }
 
-    fun distinctTrails(loc: Location<Int>, route: List<Cords>) {
-        if (loc.char == 9) completedRoutes.add(route + loc.cords)
-        cords.findNeighbors(loc)
+    fun distinctTrails(loc: Location<Int>, route: List<Cords>): Set<List<Cords>> {
+        if (loc.char == 9) return setOf(route + loc.cords)
+        return cords.findNeighbors(loc)
             .filter { it.char == loc.char + 1 }
-            .map { distinctTrails(it, route + it.cords) }
+            .flatMap { distinctTrails(it, route + it.cords) }
+            .toSet()
     }
 }
 
