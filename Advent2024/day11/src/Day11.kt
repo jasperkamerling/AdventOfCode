@@ -2,16 +2,16 @@ class Day11(fileName: String) {
     val input = fileFromResources(fileName).readLines().first()
         .split(" ").map { it.toLong() }
 
-    var state: Map<Long, Int> = input.groupingBy { it }.eachCount()
+    var state: Map<Long, Long> = input.groupingBy { it }.eachCount().mapValues { it.value.toLong() }
 
-    fun part1(): Int {
+    fun part1(): Long {
         repeat(25) {
             blink()
         }
         return state.values.sum()
     }
 
-    fun part2(): Int {
+    fun part2(): Long {
         repeat(50) {
             blink()
         }
@@ -19,7 +19,7 @@ class Day11(fileName: String) {
     }
 
     fun blink() {
-        val newState = mutableMapOf<Long, Int>()
+        val newState = mutableMapOf<Long, Long>()
         state.mapKeys { entry -> transformNumber(entry.key) }
             .forEach { t, u ->
                 t.forEach {
@@ -48,7 +48,7 @@ fun main() {
     val testInput = Day11("test11.txt")
     val input = Day11("real11.txt")
 
-    check(testInput.part1() == 55312)
+    check(testInput.part1() == 55312L)
     println(input.part1())
 
     println(input.part2())
