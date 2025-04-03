@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.power-assert") version "2.1.0"
+    kotlin("jvm") version "2.1.20"
+    kotlin("plugin.power-assert") version "2.1.20"
 }
 
 allprojects {
@@ -20,6 +20,7 @@ subprojects {
             languageVersion = JavaLanguageVersion.of(23)
         }
     }
+
 
     if(project.name != "Utilities") {
         dependencies {
