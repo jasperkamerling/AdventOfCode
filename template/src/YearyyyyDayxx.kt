@@ -1,4 +1,4 @@
-class Dayxx(fileName: String) {
+class YearyyyyDayxx(fileName: String) {
     private val input = fileFromResources(fileName).readLines()
 
     fun part1(): Int {
@@ -11,8 +11,8 @@ class Dayxx(fileName: String) {
 }
 
 fun main() {
-    val testInput = Dayxx("testxx.txt")
-    val input = Dayxx("realxx.txt")
+    val testInput = YearyyyyDayxx("test-yyyy-xx.txt")
+    val input = YearyyyyDayxx("real-yyyy-xx.txt")
 
 
     check(testInput.part1() == 0)

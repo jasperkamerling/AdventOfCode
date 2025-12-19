@@ -18,7 +18,8 @@ tasks.register<Copy>("createDay") {
         ?: throw InvalidUserDataException("Please provide a day using `-Pday=xx`")
     from("template/")
     rename("xx", day)
-    filter { line -> line.replace("xx", day) }
+    rename("yyyy", year)
+    filter { line -> line.replace("yyyy", year).replace("xx", day) }
     destinationDir = file("Advent${year}/day${day}/")
     if (destinationDir.exists()) {
         throw InvalidUserDataException("Year ${year}, day ${day} already exists.")
