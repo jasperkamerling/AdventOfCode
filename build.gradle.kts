@@ -14,7 +14,7 @@ allprojects {
 tasks.register<Copy>("createDay") {
     val year = project.findProperty("year") as String?
         ?: throw InvalidUserDataException("Please provide a year using `-Pyear=xxxx`")
-    val day = project.findProperty("day") as String?
+    val day = (project.findProperty("day") as String?)?.padStart(2, '0')
         ?: throw InvalidUserDataException("Please provide a day using `-Pday=xx`")
     from("template/")
     rename("xx", day)
