@@ -15,13 +15,35 @@ data class Cords(val x: Int, val y: Int) {
     }
 }
 
-fun <C> List<Location<C>>.findNeighbors(loc: Location<*>): List<Location<C>> =
-    this.filter {
-        it.cords.x == loc.cords.x - 1 && it.cords.y == loc.cords.y  ||
-                it.cords.x == loc.cords.x + 1 && it.cords.y == loc.cords.y  ||
-                it.cords.x == loc.cords.x && it.cords.y == loc.cords.y - 1 ||
-                it.cords.x == loc.cords.x && it.cords.y == loc.cords.y + 1
-    }
+/**
+ * Everything in the 4 directions (no diagonals)
+ */
+fun <C> List<Location<C>>.findNeighbours(source: Cords): List<Location<C>> {
+    val neighbours = setOf(
+        Cords(source.x - 1, source.y),
+        Cords(source.x + 1, source.y),
+        Cords(source.x, source.y - 1),
+        Cords(source.x, source.y + 1)
+    )
+    return this.filter { neighbours.contains(it.cords) }
+}
+
+/**
+ * Everything the surrounding 8 tiles (with diagonals)
+ */
+fun <C> Collection<Location<C>>.findSurrounding(source: Cords): List<Location<C>> {
+    val neighbours = setOf(
+        Cords(source.x - 1, source.y - 1),
+        Cords(source.x - 1, source.y),
+        Cords(source.x - 1, source.y + 1),
+        Cords(source.x + 1, source.y - 1),
+        Cords(source.x + 1, source.y),
+        Cords(source.x + 1, source.y + 1),
+        Cords(source.x, source.y - 1),
+        Cords(source.x, source.y + 1)
+    )
+    return this.filter { neighbours.contains(it.cords) }
+}
 
 fun List<Cords>.printMap(hit: Char = '#', empty: Char = '.') {
     val maxX = this.maxOf { it.x }

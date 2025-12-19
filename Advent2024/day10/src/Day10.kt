@@ -15,7 +15,7 @@ class Day10(fileName: String) {
 
     fun find9(loc: Location<Int>): Set<Cords> {
         if (loc.char == 9) return setOf(loc.cords)
-        return cords.findNeighbors(loc)
+        return cords.findNeighbours(loc.cords)
             .filter { it.char == loc.char + 1 }
             .flatMap { find9(it) }
             .toSet()
@@ -30,7 +30,7 @@ class Day10(fileName: String) {
 
     fun distinctTrails(loc: Location<Int>, route: List<Cords>): Set<List<Cords>> {
         if (loc.char == 9) return setOf(route + loc.cords)
-        return cords.findNeighbors(loc)
+        return cords.findNeighbours(loc.cords)
             .filter { it.char == loc.char + 1 }
             .flatMap { distinctTrails(it, route + it.cords) }
             .toSet()
