@@ -20,10 +20,11 @@ tasks.register<Copy>("createDay") {
     rename("xx", day)
     filter { line -> line.replace("xx", day) }
     destinationDir = file("Advent${year}/day${day}/")
-    if(destinationDir.exists()) {
+    if (destinationDir.exists()) {
         throw InvalidUserDataException("Year ${year}, day ${day} already exists.")
     }
 }
+
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "org.jetbrains.kotlin.plugin.power-assert")

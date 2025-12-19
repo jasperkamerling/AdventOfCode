@@ -1,7 +1,7 @@
 class Day01(fileName: String) {
     enum class Direction { L, R }
 
-    private val input = fileFromResources(fileName).readLines()
+    private val input = resourceLines(fileName)
         .map { Direction.valueOf(it.first().toString()) to it.drop(1).toInt() }
 
     fun part1(): Int =
