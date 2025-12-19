@@ -10,18 +10,20 @@ class Day04(fileName: String) {
 
     fun part1(): Int = tiles.findRemovable().count()
 
-
     fun part2(): Int {
         val now = tiles.toMutableList()
-        while (now.findRemovable().isNotEmpty()) {
+        while (now.hasRemovable()) {
             now.removeAll(now.findRemovable())
         }
         return tiles.size - now.size
     }
 
-    private fun List<Location<Tile>>.findRemovable() =
-        filter { it.char == Tile.PAPER }
-            .filter { findSurrounding(it.cords).count { it.char == Tile.PAPER } < 4 }
+    private fun List<Location<Tile>>.findRemovable() = filter { it.isRemovable(this) }
+
+    private fun List<Location<Tile>>.hasRemovable() = any { it.isRemovable(this) }
+
+    private fun Location<Tile>.isRemovable(tiles: List<Location<Tile>>): Boolean =
+        char == Tile.PAPER && tiles.findSurrounding(cords).count { it.char == Tile.PAPER } < 4
 }
 
 fun main() {
