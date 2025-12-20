@@ -17,4 +17,7 @@ fun readInputSplitNumber(name: String) = readInputFile(name).split(',').map { it
 fun fileFromResources(fileName: String): File = File({}.javaClass.getResource(fileName)!!.file)
 
 fun resourceLines(fileName: String): List<String> =
+    fileFromResources(fileName).readLines()
+
+fun resourceTrimmedLines(fileName: String): List<String> =
     fileFromResources(fileName).readText().trim().split('\n').map { it.trim() }

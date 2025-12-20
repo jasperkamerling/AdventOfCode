@@ -1,7 +1,7 @@
 class Day04(fileName: String) {
     enum class Tile { EMPTY, PAPER }
 
-    private val tiles = resourceLines(fileName)
+    private val tiles = resourceTrimmedLines(fileName)
         .flatMapIndexed { x, row ->
             row.mapIndexed { y, tile ->
                 Location(if (tile == '@') Tile.PAPER else Tile.EMPTY, Cords(x, y))

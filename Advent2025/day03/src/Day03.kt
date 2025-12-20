@@ -1,5 +1,5 @@
 class Day03(fileName: String) {
-    private val input = resourceLines(fileName)
+    private val input = resourceTrimmedLines(fileName)
         .map { line -> line.map { it.digitToInt() } }
 
     fun part1(): Int = input.sumOf { findMaxJoltage(it) }
