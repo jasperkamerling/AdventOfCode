@@ -73,6 +73,10 @@ fun List<Location<*>>.printMap(empty: Char = '.') {
     }
 }
 
-infix fun Int.toc(that: Int): Cords = Cords(this, that)
+fun List<Location<Char>>.printRow(empty: Char = '.') {
+    val maxY = this.maxOf { it.cords.y }
+    print((0..maxY).map { y -> this.find { it.cords.y == y }?.char ?: empty }.toCharArray())
+}
 
+infix fun Int.toc(that: Int): Cords = Cords(this, that)
 
